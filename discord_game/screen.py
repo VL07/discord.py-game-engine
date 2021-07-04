@@ -60,7 +60,7 @@ class Btn:
             print(self.display._events)
             await self.display._events["onButtonClick"][btn.custom_id](btn)
         except Exception as err:
-            print(error)
+            print(err)
             print(err)
 
 

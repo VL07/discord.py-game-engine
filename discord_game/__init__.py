@@ -19,7 +19,7 @@ from discord_game import errors, events, screen
 ########################################################
 
 class Game:
-    def __init__(self, client: discord.Client, startCommand: str) -> None:
+    def __init__(self, client: discord.Client, startCommand: str, background="#") -> None:
 
         if not isinstance(client, discord.Client):
             raise errors.InvalidParameterType("discord.Client", str(client))
@@ -41,6 +41,8 @@ class Game:
 
         self.display = """Loading"""
 
+        self.background = background
+
         ########################################################
         ####    Events
         ########################################################
@@ -48,7 +50,6 @@ class Game:
         @self._client.event
         async def on_ready():
             DiscordComponents(self._client)
-            print(f"Logged in as {self._client.user}!")
 
             for event in self._events["onBotReady"]:
                 await event()
@@ -56,7 +57,6 @@ class Game:
         @self._client.event
         async def on_message(message):
             if message.content == self.startCommand and not message.author.bot:
-                print(f"Starting game for {str(message.author)}")
 
                 embed = discord.Embed(title=self.name, description=self.description, color=self.color)
                 embed.add_field(name="\u200B", value=self.display, inline=False)
@@ -65,12 +65,11 @@ class Game:
                 sentMessage = await message.channel.send(embed=embed)
 
                 for event in self._events["onStart"]:
-                    await event(screen.Display(sentMessage, message, self.name, self.description, self.footer, self.color))
+                    await event(screen.Display(sentMessage, message, self.name, self.description, self.footer, self.color, background=self.background))
 
         @self._client.event
         async def on_button_click(btn):
             for buttonId, button in screen.allButtons.items():
-                print("button pressed")
                 print(buttonId)
                 print(btn.custom_id)
                 if buttonId == btn.custom_id:
