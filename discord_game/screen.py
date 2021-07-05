@@ -33,10 +33,14 @@ class Sprite:
 
         self.rerenderSpriteOnDisplay()
 
-    def rerenderSpriteOnDisplay(self):
+    def rerenderSpriteOnDisplay(self) -> None:
         for i in range(len(self.costume)):
             for col in range(len(self.costume[i])):
                 self.display._textToDisplay[self.posY + i][self.posX + col] = self.costume[i][col]
+
+    def setPos(self, x, y) -> None:
+        self.posX = x
+        self.posY = y
                 
 ########################################################
 ####    Button
@@ -57,11 +61,12 @@ class Btn:
 
     async def _callFunc(self, btn):
         try:
-            print(self.display._events)
-            await self.display._events["onButtonClick"][btn.custom_id](btn)
-        except Exception as err:
+            pass
+        except NameError as err:
             print(err)
-            print(err)
+
+        await self.display._events["onButtonClick"][btn.custom_id](btn)
+
 
 
 ########################################################
@@ -69,7 +74,7 @@ class Btn:
 ########################################################
 
 class Display:
-    def __init__(self, message, ctx, name, description, footer, color, background="#"):
+    def __init__(self, game, message, ctx, name, description, footer, color, background="#", spaceBetween=True):
         self.message = message
         self.ctx = ctx
         self._textToDisplay = [
@@ -85,6 +90,8 @@ class Display:
             [[background], [background], [background], [background], [background], [background], [background], [background], [background], [background]]
         ]
 
+        self.game = game
+
         self.name = name
         self.description = description
         self.footer = footer
@@ -94,6 +101,9 @@ class Display:
         self._buttonIds = []
 
         self._events = {"onButtonClick": {}}
+
+        self.spaceBetween = spaceBetween
+        self.background = background
 
 
 
@@ -105,11 +115,14 @@ class Display:
                 textToDisplay += column[0] + "\t"
             textToDisplay += "\n"
 
-        embed = discord.Embed(title=self.name, description=self.description, color=self.color)
-        embed.add_field(name=Embed.empty, value=textToDisplay, inline=False)
-        embed.add_field(name=Embed.empty, value=self.footer, inline=False)
+        embed = discord.Embed(title=self.name if self.name else Embed.empty, description=self.description if self.description else Embed.empty, color=self.color)
+        embed.add_field(name=Embed.empty, value=textToDisplay if textToDisplay else Embed.empty, inline=False)
+        embed.add_field(name=Embed.empty, value=self.footer if self.footer else Embed.empty, inline=False)
 
-        await self.message.edit(embed=embed, components=self._components)
+        if self._components:
+            await self.message.edit(embed=embed, components=self._components)
+        else:
+            await self.message.edit(embed=embed)
 
     async def addButton(self, label, emoji=None, url=None, style=ButtonStyle.gray, disabled=False, inline=True):
         global allButtons
@@ -131,13 +144,32 @@ class Display:
         else:
             self._components.append([btn])
 
-
-        await self.update()
-
         btnCls = Btn(self, btn.custom_id)
 
         allButtons[btn.custom_id] = btnCls
 
         return btnCls
+
+    def setToBg(self):
+        self._textToDisplay = [
+            [[self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background]],
+            [[self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background]],
+            [[self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background]],
+            [[self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background]],
+            [[self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background]],
+            [[self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background]],
+            [[self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background]],
+            [[self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background]],
+            [[self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background]],
+            [[self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background]],
+        ]
+
+    async def lose(self):
+        self.name = "You lose: " + self.name
+
+        self._components = None
+
+        await self.update()
+
 
         

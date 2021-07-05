@@ -19,7 +19,7 @@ from discord_game import errors, events, screen
 ########################################################
 
 class Game:
-    def __init__(self, client: discord.Client, startCommand: str, background="#") -> None:
+    def __init__(self, client: discord.Client, startCommand: str, background="#", spaceBetween=True) -> None:
 
         if not isinstance(client, discord.Client):
             raise errors.InvalidParameterType("discord.Client", str(client))
@@ -42,6 +42,7 @@ class Game:
         self.display = """Loading"""
 
         self.background = background
+        self.spaceBetween = spaceBetween
 
         ########################################################
         ####    Events
@@ -65,13 +66,11 @@ class Game:
                 sentMessage = await message.channel.send(embed=embed)
 
                 for event in self._events["onStart"]:
-                    await event(screen.Display(sentMessage, message, self.name, self.description, self.footer, self.color, background=self.background))
+                    await event(screen.Display(self, sentMessage, message, self.name, self.description, self.footer, self.color, background=self.background, spaceBetween=self.spaceBetween))
 
         @self._client.event
         async def on_button_click(btn):
             for buttonId, button in screen.allButtons.items():
-                print(buttonId)
-                print(btn.custom_id)
                 if buttonId == btn.custom_id:
                     await button._callFunc(btn)
                     break
