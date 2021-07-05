@@ -26,7 +26,7 @@ async def onStart(display):
 
     #display.name = "Snake - press a button to start"
     
-    snake = [screen.Sprite(display, ["🟥"], 5, 5), screen.Sprite(display, ["🟥"], 5, 6), screen.Sprite(display, ["🟥"], 5, 7), screen.Sprite(display, ["🟥"], 5, 8), screen.Sprite(display, ["🟥"], 5, 9)]
+    snake = [screen.Sprite(display, ["🟥"], 5, 5), screen.Sprite(display, ["🟥"], 5, 6)]
     apple = screen.Sprite(display, ["🍏"], 5, 4)
 
     upBtn = await display.addButton("Up", emoji="⬆", style=screen.ButtonStyle.green, inline=False)
@@ -42,7 +42,8 @@ async def onStart(display):
     s.score = 0
 
     display.name = "Snake | " + str(s.score)
-    display.description = "A minigame made by VL07"
+    display.description = "A minigame made by `VL07`"
+    display.footer = "Please report bugs [here](https://github.com/VL07/discord.py-game-engine/issues)"
 
     await display.update()
 
