@@ -107,7 +107,10 @@ class Display:
 
 
 
-    async def update(self):
+    async def update(self) -> None:
+        """Update the display
+        # Returns
+        `None`"""
         textToDisplay = ""
 
         for row in self._textToDisplay:
@@ -124,7 +127,18 @@ class Display:
         else:
             await self.message.edit(embed=embed)
 
-    async def addButton(self, label, emoji=None, url=None, style=ButtonStyle.gray, disabled=False, inline=True):
+    async def addButton(self, label, emoji=None, url=None, style=ButtonStyle.gray, disabled=False, inline=True) -> Btn:
+        """Add a button to the display
+        # Parameters
+        `label`: str, the text of the button
+        ## Opitional
+        `emoji`: str, a emoji
+        `url`: str, a url you want the button to lead to
+        `style`: ButtonStyle, the color you button should be
+        `disabled`: bool, if the button is clickable
+        `inline`: bool, if the button should be displayed inline
+        # Returns
+        `Btn`"""
         global allButtons
 
         if emoji and url:
@@ -150,7 +164,10 @@ class Display:
 
         return btnCls
 
-    def setToBg(self):
+    def setToBg(self) -> None:
+        """Set the display to a 10x10 area of tiles of the selected background tile
+        # Returns
+        `None`"""
         self._textToDisplay = [
             [[self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background]],
             [[self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background]],
@@ -164,12 +181,26 @@ class Display:
             [[self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background], [self.background]],
         ]
 
-    async def lose(self):
+    async def lose(self) -> None:
+        """Make the player unable to interact with the message
+        # Returns
+        `None`"""
+
         self.name = "You lose: " + self.name
 
         self._components = None
 
         await self.update()
+
+    def getPos(self, x: int, y: int) -> str:
+        """Get what string is on the x and y cordinates
+        # Parameters
+        `x`: int, the x pos of the tile you want to check
+        `y`: int, the y pos of the tile you want to check
+        # Returns
+        `str` of what was on that tile"""
+
+        return self._textToDisplay[y][x][0]
 
 
         

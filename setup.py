@@ -10,7 +10,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="discord_game",
-    version="0.1.2",
+    version="0.1.3",
     description="Create a discord game",
     long_description=README,
     long_description_content_type="text/markdown",
